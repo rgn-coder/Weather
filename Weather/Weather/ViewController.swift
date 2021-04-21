@@ -56,10 +56,16 @@ class ViewController: UIViewController {
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         searchBar.delegate = self
     }
+    
+    
 }
 
 extension ViewController: UISearchBarDelegate {
@@ -67,15 +73,15 @@ extension ViewController: UISearchBarDelegate {
         
         searchBar.resignFirstResponder()
         
-        let keyString = "bd6f8467683e4281ba5172555190902"
+        let keyString = "315ea3059bffc64118e101c83a6977e5"
         let txtString = searchBar.text!.replacingOccurrences(of: " ", with: "%20")
-        let urlString = "https://api.apixu.com/v1/current.json?key=\(keyString)&q=\(txtString)"
-        
+        let urlString = "http://api.weatherstack.com/current?access_key=\(keyString)&query=\(txtString)"
+
         var locationName: String?
         var temperature: Double?
         var errorHasOccured: Bool = false
         
-        guard let url = URL(string: urlString) else{
+        guard let url = URL(string: urlString) else {
             return
         }
         
@@ -89,27 +95,27 @@ extension ViewController: UISearchBarDelegate {
                 let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
                     as! [String:AnyObject]
             
-                if let _ = json["error"] {
-                    errorHasOccured = true
-                }
-            
+//                if let _ = json["error"] {
+//                    errorHasOccured = true
+//                }
+//
                 if let location = json["location"] {
                     locationName = location["name"] as? String
                 }
             
                 if let current = json["current"] {
-                    temperature = current["temp_c"] as? Double
+                    temperature = current["temperature"] as? Double
                 }
             
                 DispatchQueue.main.async {
-                    if errorHasOccured {
-                        self?.cityLabel.text = "n/a"
-                        self?.temperatureLabel.isHidden = true
-                    } else {
+//                    if errorHasOccured {
+//                        self?.cityLabel.text = "n/a"
+//                        self?.temperatureLabel.isHidden = true
+//                    } else {
                         self?.cityLabel.text = locationName
                         self?.temperatureLabel.text = "\(temperature!)"
-                        self?.temperatureLabel.isHidden = false
-                    }
+                        //self?.temperatureLabel.isHidden = false
+                    //}
                 }
             }
             catch let jsonError {
